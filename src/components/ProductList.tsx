@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { fetchItem, fetchProducts, resetProduct } from "../features/productSlice"
 
 function ProductList() {
-    const {products} = useSelector((state: RootState) => state.productR)
+    const {products, status} = useSelector((state: RootState) => state.productR)
     let {product} = useSelector((state: RootState) => state.productR)
     const dispatch:AppDispatch = useDispatch()
     useEffect(() => {
@@ -21,6 +21,8 @@ function ProductList() {
   return (
     <div className="container">
         <h2>Product List</h2>
+        {status === 'loading' && <p id="loading">Loading...</p>}
+
         {!product&&products.length>0 && <ul className="products">
             {products.map(product => {
               const { id, title, description, price, thumbnail } = product;
@@ -35,6 +37,7 @@ function ProductList() {
               );
             })} 
         </ul>}
+        
         {product && (
           <div className="product">
             <img src={product.thumbnail} alt={product.title} />

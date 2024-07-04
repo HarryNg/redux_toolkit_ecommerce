@@ -8,3 +8,9 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
 }
+#loading {
+  display: flex;
+  justify-content: center;
+  font-size: 10rem;
+  color: brown;
+}
