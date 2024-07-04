@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios"
 
-export type Product = {
+export type Product ={
     id: string
     title: string
     description: string
@@ -18,7 +18,7 @@ const initialState : ProductState = {
 export type ProductState = {
     products: Product[]
     status: 'idle' | 'loading' | 'succeeded' | 'failed'
-    error: string | null
+    error: string | null | {}
 }
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
     const response = await axios.get('https://dummyjson.com/products')
@@ -34,13 +34,13 @@ const productSlice = createSlice({
         builder.addCase(fetchProducts.pending, (state) => {
             state.status = 'loading'
         })
-        builder.addCase(fetchProducts.fulfilled, (state, action) => {
+        builder.addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
             state.status = 'succeeded'
             state.products = action.payload
         })
-        builder.addCase(fetchProducts.rejected, (state, action) => {
+        builder.addCase(fetchProducts.rejected, (state, action: PayloadAction<unknown | string>) => {
             state.status = 'failed'
-            state.error = "Failed to fetch products" || action.error.message
+            state.error = action.payload || "Failed to fetch products"
         })
     }
 })
