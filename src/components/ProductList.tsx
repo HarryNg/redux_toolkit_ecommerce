@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { fetchItem, fetchProducts, resetProduct } from "../features/productSlice"
 
 function ProductList() {
-    const {products, status} = useSelector((state: RootState) => state.productR)
+    const {products, status, error} = useSelector((state: RootState) => state.productR)
     let {product} = useSelector((state: RootState) => state.productR)
     const dispatch:AppDispatch = useDispatch()
     useEffect(() => {
@@ -17,11 +17,15 @@ function ProductList() {
     const handleBackBtn = () => {
       dispatch(resetProduct());
     }
+    if (error) {
+      return <div>Error: {error.toString()}</div>;
+    }
 
   return (
     <div className="container">
         <h2>Product List</h2>
         {status === 'loading' && <p id="loading">Loading...</p>}
+        {status === 'failed' && !products.length && <p id="failed">Failed to fetch products</p>}
 
         {!product&&products.length>0 && <ul className="products">
             {products.map(product => {
@@ -30,7 +34,7 @@ function ProductList() {
                 <li key={id}>
                     <img src={thumbnail} alt={title} />
                     <h3>{title}</h3>
-                    <p>{description}</p>
+                    <p className="truncate">{description}</p>
                     <p>${price}</p>
                     <button onClick={() => handleGetItem(id)}>Show More</button>
                 </li>
