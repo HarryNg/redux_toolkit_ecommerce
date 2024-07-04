@@ -9,7 +9,8 @@ function ProductItem( {product, onHandleBackBtn}:ProductItemProps) {
             <img src={product.thumbnail} alt={product.title} />
             <h2>{product.title}</h2>
             <p>{product.description}</p>
-            <p>${product.price}</p>
+            <p className="rating">Rating: {product.rating}</p>
+            <p className="price">${product.price}</p>
             <button onClick={() => onHandleBackBtn()}>Back to Product List</button>
             </div>
         )}
