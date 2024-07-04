@@ -13,7 +13,7 @@ function ProductList() {
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [sortOption, setSortOption] = useState<string>('price-asc')
     const [currentPage, setCurrentPage] = useState<number>(1)
-    
+
     //`https://dummyjson.com/products?limit=${itemPerPage}&skip=${(currentPage-1)*itemPerPage}`
     const itemPerPage = 10
     const url = `https://dummyjson.com/products?limit=0`
@@ -115,15 +115,16 @@ function ProductList() {
             )}
           </ul>
         }
-        <div className="pagination">
+        {!product && (<div className="pagination">
           {Array.from({length: totalPages}, (_, index)=> {
             return <button 
-              key={index} 
+              key={index}
+              className={currentPage === index+1 ? 'active' : ''}
               onClick={ () => handleCurrentPageChange(index+1)}>
                 {index + 1}
               </button>
           })}
-        </div>
+        </div>)}
 
         < ProductItem product={product} onHandleBackBtn={handleBackBtn}/>
         

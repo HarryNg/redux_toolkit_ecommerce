@@ -12,6 +12,23 @@
   align-items: center;
   margin-top: 1rem;
 }
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #ccc;
+  font-weight: bold;
+}
+
+.pagination button:hover {
+  background-color: #ddd;
+}
+
 .products {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
