@@ -40,4 +40,6 @@ export type ProductItemProps = {
 export type ProductListItemsProps = {
     product: Product | null;
     onHandleGetItem: (id:string) => void;
+    onEditProduct: (product: Product) => void;
+    onDeleteProduct: (id: string) => void;
 }

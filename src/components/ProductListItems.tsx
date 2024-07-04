@@ -1,11 +1,11 @@
 import { ProductListItemsProps } from "../type";
 
-function ProductListItems({product, onHandleGetItem}:ProductListItemsProps) {
+function ProductListItems({product, onHandleGetItem, onEditProduct, onDeleteProduct}:ProductListItemsProps) {
     if(!product) {
         return null;
     }
 
-    const { id, title, description, price, thumbnail,rating,category,stock,weight,dimensions,warrantyInformation,reviews,shippingInformation,availabilityStatus } = product;
+    const { id, title, description, price, thumbnail,rating } = product;
     return (
     <li key={id}>
         <img src={thumbnail} alt={title} />
@@ -14,6 +14,8 @@ function ProductListItems({product, onHandleGetItem}:ProductListItemsProps) {
         <p>Rating: {rating}</p>
         <p>${price}</p>
         <button onClick={() => onHandleGetItem(id)}>Show More</button>
+        <button onClick={() => onEditProduct(product)}>Edit</button>
+        <button onClick={() => onDeleteProduct(product.id)}>Delete</button>
     </li>
     );
 

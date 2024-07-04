@@ -2,9 +2,6 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios"
 import { Product, ProductState } from "../type"
 
-
-
-const url = 'https://dummyjson.com/products'
 const initialState : ProductState = {
     products: [],
     product: null,
@@ -33,7 +30,27 @@ const productSlice = createSlice({
     reducers: {
         resetProduct: (state) => {
             state.product = null
-        }
+        },
+        fetchProductsSuccess(state, action: PayloadAction<Product[]>) {
+            state.products = action.payload;
+            state.status = 'succeeded';
+        },
+        fetchItemSuccess(state, action: PayloadAction<Product>) {
+            state.product = action.payload;
+            state.status = 'succeeded';
+        },
+        addProduct(state, action: PayloadAction<Product>) {
+            state.products.push(action.payload);
+        },
+        editProduct(state, action: PayloadAction<Product>) {
+            const index = state.products.findIndex(product => product.id === action.payload.id);
+            if (index !== -1) {
+                state.products[index] = action.payload;
+            }
+        },
+        deleteProduct(state, action: PayloadAction<string>) {
+            state.products = state.products.filter(product => product.id !== action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchProducts.pending, (state) => {
@@ -61,5 +78,5 @@ const productSlice = createSlice({
 
     }
 })
-export const { resetProduct } = productSlice.actions
+export const { addProduct, editProduct, deleteProduct, resetProduct, fetchProductsSuccess, fetchItemSuccess } = productSlice.actions;
 export default productSlice.reducer

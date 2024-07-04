@@ -1,9 +1,33 @@
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../store"
 import { useEffect, useState } from "react"
-import { fetchItem, fetchProducts, resetProduct } from "../features/productSlice"
+import { addProduct, deleteProduct, editProduct, fetchItem, fetchItemSuccess, fetchProducts, resetProduct } from "../features/productSlice"
 import ProductItem from "./ProductItem"
 import ProductListItems from "./ProductListItems"
+import { Product } from "../type"
+import ProductForm from "./ProductForm"
+
+
+const initialProductState: Product = {
+  id: '',
+  title: '',
+  description: '',
+  price: 0,
+  rating: 0,
+  category: '',
+  stock: 0,
+  weight: 0,
+  reviews: [],
+  thumbnail: '',
+  dimensions: {
+    width: 0,
+    height: 0,
+    depth: 0,
+  },
+  warrantyInformation: '',
+  shippingInformation: '',
+  availabilityStatus: '',
+};
 
 function ProductList() {
     const {products, status, error} = useSelector((state: RootState) => state.productR)
@@ -13,6 +37,8 @@ function ProductList() {
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [sortOption, setSortOption] = useState<string>('price-asc')
     const [currentPage, setCurrentPage] = useState<number>(1)
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     //`https://dummyjson.com/products?limit=${itemPerPage}&skip=${(currentPage-1)*itemPerPage}`
     const itemPerPage = 10
@@ -24,7 +50,13 @@ function ProductList() {
     }, [dispatch]);
   
     const handleGetItem = (id: string) => {
-      dispatch(fetchItem(id));
+      const productInState = products.find(product => product.id === id);
+      if (productInState) {
+        dispatch(fetchItemSuccess(productInState));
+      }
+      else{
+        dispatch(fetchItem(id));
+      }
     }
 
     const handleBackBtn = () => {
@@ -81,6 +113,29 @@ function ProductList() {
     const handleCurrentPageChange = (index:number) =>{
       setCurrentPage(index)
     }
+    const handleAddProduct = () => {
+      setSelectedProduct(initialProductState);
+      setIsEditing(true);
+    };
+  
+    const handleEditProduct = (product: Product) => {
+      setSelectedProduct(product);
+      setIsEditing(true);
+    };
+  
+    const handleDeleteProduct = (id: string) => {
+      dispatch(deleteProduct(id));
+    };
+  
+    const handleFormSubmit = (data: Product) => {
+      if (data.id) {
+        dispatch(editProduct(data));
+      } else {
+        dispatch(addProduct({ ...data, id: String(new Date().getTime()) }));
+      }
+      setIsEditing(false);
+      setSelectedProduct(null);
+    };
     
   return (
     <div className="container">
@@ -102,19 +157,30 @@ function ProductList() {
           <option value="rating-asc">Rating: Low to High</option>
           <option value="rating-desc">Rating: High to Low</option>
         </select>
+        <button onClick={handleAddProduct}>Add Product</button>
 
-        {!product && paginatedProducts.length>0 && 
+        {!product && !isEditing&& paginatedProducts.length>0 && 
           <ul className="products">
             {paginatedProducts.map(product => (
                 <ProductListItems 
                   product={product} 
                   onHandleGetItem={handleGetItem} 
+                  onEditProduct={handleEditProduct}
+                  onDeleteProduct={handleDeleteProduct}
                   key={product.id}
                 />
               )
             )}
           </ul>
         }
+
+        {isEditing && (
+          <ProductForm
+            initialValues={selectedProduct || initialProductState}
+            onSubmit={handleFormSubmit}
+          />
+        )}
+
         {!product && (<div className="pagination">
           {Array.from({length: totalPages}, (_, index)=> {
             return <button 
