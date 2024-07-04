@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../store"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { fetchItem, fetchProducts, resetProduct } from "../features/productSlice"
 import ProductItem from "./ProductItem"
 import ProductListItems from "./ProductListItems"
@@ -9,6 +9,9 @@ function ProductList() {
     const {products, status, error} = useSelector((state: RootState) => state.productR)
     let {product} = useSelector((state: RootState) => state.productR)
 
+    const [searchTerm, setSearchTerm] = useState('')
+    const filteredProducts = products.filter(product => product.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    
     const dispatch:AppDispatch = useDispatch()
 
     useEffect(() => {
@@ -18,8 +21,13 @@ function ProductList() {
     const handleGetItem = (id: string) => {
       dispatch(fetchItem(id));
     }
+
     const handleBackBtn = () => {
       dispatch(resetProduct());
+    }
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value)
     }
 
     if (status === 'loading') {
@@ -38,9 +46,15 @@ function ProductList() {
     <div className="container">
         <h2>Product List</h2>
 
-        {!product && products.length>0 && 
+        <input 
+          type="text" 
+          placeholder="Search product" 
+          onChange={handleSearchChange}
+        />
+
+        {!product && filteredProducts.length>0 && 
           <ul className="products">
-            {products.map(product => (
+            {filteredProducts.map(product => (
                 <ProductListItems 
                   product={product} 
                   onHandleGetItem={handleGetItem} 
