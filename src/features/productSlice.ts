@@ -1,14 +1,8 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios"
+import { Product, ProductState } from "../type"
 
-export type Product ={
-    id: string
-    title: string
-    description: string
-    price: number
-    category: string
-    thumbnail: string
-}
+
 
 const initialState : ProductState = {
     products: [],
@@ -16,19 +10,18 @@ const initialState : ProductState = {
     status: 'idle',
     error: null
 }
-export type ProductState = {
-    products: Product[]
-    product: Product | null
-    status: 'idle' | 'loading' | 'succeeded' | 'failed'
-    error: string | null | {}
-}
+
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
     const response = await axios.get('https://dummyjson.com/products')
     return response.data.products
 })
 export const fetchItem = createAsyncThunk('products/fetchItem', async (id: string) => { 
-    const response = await axios.get(`https://dummyjson.com/products/${id}`)
-    return response.data
+    try {
+        const response = await axios.get(`https://dummyjson.com/products/${id}`)
+        return response.data
+    } catch (error) {
+        return error
+    }
 })
 
 const productSlice = createSlice({
