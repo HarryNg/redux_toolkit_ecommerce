@@ -5,7 +5,7 @@ function ProductListItems({product, onHandleGetItem}:ProductListItemsProps) {
         return null;
     }
 
-    const { id, title, description, price, thumbnail,rating } = product;
+    const { id, title, description, price, thumbnail,rating,category,stock,weight,dimensions,warrantyInformation,reviews,shippingInformation,availabilityStatus } = product;
     return (
     <li key={id}>
         <img src={thumbnail} alt={title} />

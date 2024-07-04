@@ -6,6 +6,22 @@ export type Product ={
     price: number
     category: string
     rating: number
+    stock: number
+    weight: number
+    dimensions: {
+        width: number
+        height: number
+        depth: number
+    }
+    warrantyInformation: string
+    shippingInformation: string
+    availabilityStatus: string
+    reviews: {
+        rating: number
+        comment: string
+        date: string
+        reviewerName: string
+    }[]
     thumbnail: string
 }
 
