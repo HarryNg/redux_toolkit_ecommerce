@@ -28,6 +28,7 @@ export type Product ={
 export type ProductState = {
     products: Product[]
     product: Product | null
+    totalItems: number
     status: 'idle' | 'loading' | 'succeeded' | 'failed'
     error: string | null | {}
 }

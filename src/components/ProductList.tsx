@@ -8,16 +8,21 @@ import ProductListItems from "./ProductListItems"
 function ProductList() {
     const {products, status, error} = useSelector((state: RootState) => state.productR)
     let {product} = useSelector((state: RootState) => state.productR)
+    const dispatch:AppDispatch = useDispatch()
 
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [sortOption, setSortOption] = useState<string>('price-asc')
+    const [currentPage, setCurrentPage] = useState<number>(1)
     
-    const dispatch:AppDispatch = useDispatch()
+    //`https://dummyjson.com/products?limit=${itemPerPage}&skip=${(currentPage-1)*itemPerPage}`
+    const itemPerPage = 10
+    const url = `https://dummyjson.com/products?limit=0`
+    
 
     useEffect(() => {
-        dispatch(fetchProducts())
-    }, [dispatch])
-
+      dispatch(fetchProducts(url));
+    }, [dispatch]);
+  
     const handleGetItem = (id: string) => {
       dispatch(fetchItem(id));
     }
@@ -33,6 +38,10 @@ function ProductList() {
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSortOption(e.target.value)
     }
+
+    useEffect( () => {
+      setCurrentPage(1)
+    }, [searchTerm, sortOption])
 
     const filteredProducts = products
       .filter(product => product.title
@@ -55,7 +64,8 @@ function ProductList() {
         return 0
       })
 
-
+    const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage);
+    const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
     if (status === 'loading') {
       return <p id="loading">Loading...</p>
     }
@@ -68,6 +78,10 @@ function ProductList() {
       return <div>Error: {error.toString()}</div>;
     }
 
+    const handleCurrentPageChange = (index:number) =>{
+      setCurrentPage(index)
+    }
+    
   return (
     <div className="container">
         <h2>Product List</h2>
@@ -89,9 +103,9 @@ function ProductList() {
           <option value="rating-desc">Rating: High to Low</option>
         </select>
 
-        {!product && filteredProducts.length>0 && 
+        {!product && paginatedProducts.length>0 && 
           <ul className="products">
-            {filteredProducts.map(product => (
+            {paginatedProducts.map(product => (
                 <ProductListItems 
                   product={product} 
                   onHandleGetItem={handleGetItem} 
@@ -101,6 +115,15 @@ function ProductList() {
             )}
           </ul>
         }
+        <div className="pagination">
+          {Array.from({length: totalPages}, (_, index)=> {
+            return <button 
+              key={index} 
+              onClick={ () => handleCurrentPageChange(index+1)}>
+                {index + 1}
+              </button>
+          })}
+        </div>
 
         < ProductItem product={product} onHandleBackBtn={handleBackBtn}/>
         

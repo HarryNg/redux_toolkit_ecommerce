@@ -4,15 +4,18 @@ import { Product, ProductState } from "../type"
 
 
 
+const url = 'https://dummyjson.com/products'
 const initialState : ProductState = {
     products: [],
     product: null,
+    totalItems: 0,
     status: 'idle',
     error: null
 }
 
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-    const response = await axios.get('https://dummyjson.com/products')
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async (url:string) => {
+    const response = await axios.get(url)
+    
     return response.data.products
 })
 export const fetchItem = createAsyncThunk('products/fetchItem', async (id: string) => { 
